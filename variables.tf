@@ -27,8 +27,40 @@ variable "repo_description" {
   type        = string
 }
 
+variable "node_pools" {
+  description = "node pools"
+  default     = { testing = 1 }
+  type        = map(number)
+}
+
+variable "namespaces" {
+  description = "namespaces"
+  default     = ["testing"]
+  type        = list(string)
+}
+
 variable "credentials_file" {
   description = "value of the credentials file"
   type        = string
   default     = "terraform-key.json"
 }
+
+variable "subnet_cidr" {
+  description = "CIDR for the subnet"
+  type        = string
+}
+
+variable "pods_cidr" {
+  description = "Pods CIDR range"
+  type        = string
+}
+
+variable "services_cidr" {
+  description = "Services CIDR range"
+  type        = string
+}
+
+
+
+
+

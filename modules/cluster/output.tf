@@ -1,13 +1,21 @@
 output "cluster_name" {
-  value = google_container_cluster.primary.name
+  description = "The name of the GKE cluster"
+  value       = google_container_cluster.primary.name
+}
+
+output "location" {
+  description = "The location of the GKE cluster"
+  value       = google_container_cluster.primary.location
 }
 
 output "cluster_endpoint" {
-  value = google_container_cluster.primary.endpoint
+  description = "The endpoint of the GKE cluster"
+  value       = google_container_cluster.primary.endpoint
 }
 
 output "cluster_ca" {
-  value = google_container_cluster.primary.master_auth[0].cluster_ca_certificate
+  description = "The CA certificate of the GKE cluster"
+  value       = google_container_cluster.primary.master_auth[0].cluster_ca_certificate
 }
 
 output "stable_gke_version" {

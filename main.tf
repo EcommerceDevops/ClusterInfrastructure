@@ -6,19 +6,35 @@ provider "google" {
 
 data "google_client_config" "default" {}
 
-module "network" {
-  source     = "./modules/network"
-  project_id = var.project_id
-  region     = var.region
+locals {
+  environment = terraform.workspace
+}
+
+module "networking" {
+  source        = "./modules/networking"
+  project_id    = var.project_id
+  region        = var.region
+  network_name  = "${local.environment}-vpc"
+  subnet_name   = "${local.environment}-subnet"
+  subnet_cidr   = var.subnet_cidr
+  pods_cidr     = var.pods_cidr
+  services_cidr = var.services_cidr
+  ip_count      = 1
 }
 
 module "cluster" {
-  source         = "./modules/cluster"
-  region         = var.region
-  node_locations = var.node_locations
-  project_id     = var.project_id
-  vpc_name       = module.network.vpc_name
-  subnet_name    = module.network.subnet_name
+  source              = "./modules/cluster"
+  name                = "${local.environment}-gke-cluster"
+  project_id          = var.project_id
+  region              = var.region
+  node_locations      = var.node_locations
+  vpc_name            = module.networking.network_name
+  subnet_name         = module.networking.subnet_name
+  network_id          = module.networking.network_id
+  subnet_id           = module.networking.subnet_id
+  pods_range_name     = module.networking.pods_range_name
+  services_range_name = module.networking.services_range_name
+  depends_on          = [module.networking]
 }
 
 provider "kubernetes" {
@@ -34,16 +50,12 @@ module "node_pools" {
   project_id         = var.project_id
   stable_gke_version = module.cluster.stable_gke_version
   cluster_name       = module.cluster.cluster_name
+  pools              = var.node_pools
+  depends_on         = [module.cluster]
 }
 
 module "namespaces" {
-  source = "./modules/namespaces"
-}
-
-module "static_external_ip" {
-  source      = "./modules/static_external_ip"
-  project_id  = var.project_id
-  region      = var.region
-  name_prefix = "ingress-static-ip"
-  ip_count    = 2
+  source     = "./modules/namespaces"
+  depends_on = [module.cluster, module.node_pools]
+  namespaces = var.namespaces
 }

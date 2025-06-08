@@ -25,10 +25,10 @@ variable "pools" {
   type        = map(number)
 
   validation {
-    condition     = alltrue([
-      for k, v in var.pools : v >= 0 && v <= 10
+    condition = alltrue([
+      for k, v in var.pools : v >= 0 && v <= 20
     ])
-    error_message = "Each pool size must be between 0 and 10 nodes."
+    error_message = "Each pool size must be between 0 and 20 nodes."
   }
 
   default = {

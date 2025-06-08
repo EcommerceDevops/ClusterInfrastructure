@@ -13,23 +13,31 @@ ENV=$1
 
 # Validate the provided environment
 if [ -z "$ENV" ]; then
-    echo "ERROR: No environment specified. Please provide 'dev', 'staging', or 'prod'."
+    echo "ERROR: No environment specified. Please provide 'devops', 'staging', or 'prod'."
     exit 1
-elif [ "$ENV" != "dev" ] && [ "$ENV" != "staging" ] && [ "$ENV" != "prod" ]; then
-    echo "ERROR: Invalid environment '$ENV'. Valid options are 'dev', 'staging', or 'prod'."
+elif [ "$ENV" != "staging" ] && [ "$ENV" != "prod" ] && [ "$ENV" != "devops" ]; then
+    echo "ERROR: Invalid environment '$ENV'. Valid options are 'devops', 'staging', or 'prod'."
     exit 1
 fi
 
 echo "--- Environment Selection ---"
 echo "🔹 Selecting environment: $ENV..."
-cd environments/"$ENV"
+
+echo "--- Terraform Workspace Selection ---"
+echo "🔹 Selecting Terraform workspace: $ENV..."
+terraform workspace select "$ENV"
 
 # --- Infrastructure Destruction ---
 echo "--- Infrastructure Destruction ---"
 
-VAR_FILE="terraform.tfvars"
+VAR_FILE="environments/$ENV/terraform.$ENV.tfvars"
 
 echo "🔹 Destroying infrastructure for environment: $ENV..."
+terraform destroy \
+  -target=module.namespaces \
+  -target=module.node_pools \
+  -var-file="$VAR_FILE" \
+  -auto-approve
 terraform destroy -var-file="$VAR_FILE" -auto-approve
 
 echo "✅ Infrastructure for environment '$ENV' has been destroyed."

@@ -1,1 +1,0 @@
-# Prod env main.tf file for GKE cluster with node pools

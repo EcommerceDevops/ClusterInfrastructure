@@ -5,29 +5,20 @@ set -e  # Exit immediately if a command exits with a non-zero status.
 # Go to the script's directory
 cd "$(dirname "${BASH_SOURCE[0]}")"/..
 
-# --- Environment Selection ---
-echo "--- Environment Selection ---"
-
 # Get the environment from the first argument
 ENV=$1
 
 # Validate the provided environment
 if [ -z "$ENV" ]; then
-    echo "ERROR: No environment specified. Please provide 'dev', 'staging', or 'prod'."
+    echo "ERROR: No environment specified. Please provide 'devops', 'staging', or 'prod'."
     exit 1
-elif [ "$ENV" != "dev" ] && [ "$ENV" != "staging" ] && [ "$ENV" != "prod" ]; then
-    echo "ERROR: Invalid environment '$ENV'. Valid options are 'dev', 'staging', or 'prod'."
+elif [ "$ENV" != "staging" ] && [ "$ENV" != "prod" ] && [ "$ENV" != "devops" ]; then
+    echo "ERROR: Invalid environment '$ENV'. Valid options are 'devops', 'staging', or 'prod'."
     exit 1
 fi
 
 echo "--- Environment Selection ---"
 echo "🔹 Selecting environment: $ENV..."
-cd environments/"$ENV"
-
-# --- Terraform Configuration ---
-echo "--- Terraform Configuration ---"
-
-VAR_FILE="terraform.tfvars"
 
 # Check if Terraform is already initialized
 if [ ! -d ".terraform" ]; then
@@ -36,6 +27,27 @@ if [ ! -d ".terraform" ]; then
 else
     echo "✅ Terraform is already initialized. Skipping init..."
 fi
+
+echo "--- Terraform Workspace Selection ---"
+echo "🔹 Selecting Terraform workspace: $ENV..."
+terraform workspace select "$ENV"
+
+KEY_FILE="environments/$ENV/terraform-cluster-key.$ENV.json"
+
+# Usando -f para verificar si existe el key.json
+if [ -f "$KEY_FILE" ]; then
+    echo "KEY file '$KEY_FILE' exist."
+else
+    echo "KEY file '$KEY_FILE' does not exist."
+    echo "Creating Service Account key..."
+
+    ./scripts/create_sa.sh "$ENV"
+fi
+
+# --- Terraform Configuration ---
+echo "--- Terraform Configuration ---"
+
+VAR_FILE="environments/$ENV/terraform.$ENV.tfvars"
 
 # Format code
 echo "🔹 Running terraform fmt..."

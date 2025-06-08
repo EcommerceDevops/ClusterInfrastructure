@@ -1,6 +1,3 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
 output "region" {
   value       = var.region
   description = "GCloud Region"
@@ -20,12 +17,13 @@ output "kubernetes_cluster_host" {
   value       = module.cluster.cluster_endpoint
   description = "GKE Cluster Host"
 }
+
 output "reserved_static_ips" {
   description = "List of reserved static IP addresses"
-  value       = module.static_external_ip.static_ips
+  value       = module.networking.ip_address
 }
 
 output "reserved_static_ip_names" {
   description = "List of names of the reserved static IPs"
-  value       = module.static_external_ip.static_ip_names
+  value       = module.networking.ip_address_name
 }

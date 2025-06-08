@@ -35,3 +35,14 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+.terraform.lock.hcl
+
+
+# Ignore any local environment files that may contain sensitive information
+# such as AWS credentials, GCP service account keys, etc.
+
+*.env.*
+.env
+
+*.key.*.json
+*.key.*.yaml

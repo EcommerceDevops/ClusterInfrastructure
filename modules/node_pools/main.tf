@@ -16,7 +16,7 @@ resource "google_container_node_pool" "primary_nodes" {
     ]
 
     labels = {
-      env = var.project_id
+      env  = var.project_id
       role = each.key
     }
 

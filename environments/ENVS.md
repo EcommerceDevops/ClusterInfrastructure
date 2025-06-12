@@ -1,5 +1,3 @@
-Claro, aquí tienes dos ejemplos de README en inglés para lo que me pediste.
-
 # Terraform Infrastructure - Environments Structure
 
 This repository organizes Terraform configurations into multiple environments to support isolated infrastructure deployments for different stages such as devops, staging, and prod.

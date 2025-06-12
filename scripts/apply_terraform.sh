@@ -32,11 +32,13 @@ echo "--- Terraform Workspace Selection ---"
 echo "🔹 Selecting Terraform workspace: $ENV..."
 terraform workspace select "$ENV"
 
-KEY_FILE="environments/$ENV/terraform-cluster-key.$ENV.json"
+KEY_FILE="environments/$ENV/terraform-cluster.key.$ENV.json"
 
 # Usando -f para verificar si existe el key.json
 if [ -f "$KEY_FILE" ]; then
     echo "KEY file '$KEY_FILE' exist."
+    echo "file exist and will be use ----->."
+    
 else
     echo "KEY file '$KEY_FILE' does not exist."
     echo "Creating Service Account key..."

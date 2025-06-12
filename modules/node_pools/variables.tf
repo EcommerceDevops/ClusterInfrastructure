@@ -20,6 +20,12 @@ variable "stable_gke_version" {
   type        = string
 }
 
+variable "gke_version_prefix" {
+  description = "Prefix for GKE version"
+  type        = string
+  default     = "1.32."
+}
+
 variable "pools" {
   description = "Number of node pools for each application tier"
   type        = map(number)

@@ -5,13 +5,21 @@ data "google_container_engine_versions" "gke_version" {
 }
 
 resource "google_container_cluster" "primary" {
-  name                     = "${var.project_id}-gke"
+  name                     = var.name
   location                 = var.region
   node_locations           = var.node_locations
   remove_default_node_pool = true
   initial_node_count       = 1
   network                  = var.vpc_name
   subnetwork               = var.subnet_name
+
+  # Stablishing the GKE version to avoid issues with the cluster version
+  min_master_version = data.google_container_engine_versions.gke_version.latest_master_version
+
+  # 
+  release_channel {
+    channel = "UNSPECIFIED"
+  }
 
   private_cluster_config {
     enable_private_nodes    = true            // Nodos solo con IP interna
@@ -26,7 +34,7 @@ resource "google_container_cluster" "primary" {
 
   node_config {
     disk_type    = "pd-standard"
-    disk_size_gb = 12 # Must inccremente this value to avoid disk smaller than cluster size selected error.
+    disk_size_gb = 20 # Must inccremente this value to avoid disk smaller than cluster size selected error.
   }
 
   deletion_protection = false

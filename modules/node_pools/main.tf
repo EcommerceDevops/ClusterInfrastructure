@@ -8,7 +8,7 @@ resource "google_container_node_pool" "primary_nodes" {
   version    = var.stable_gke_version
   node_count = each.value
 
-  
+
   # Addding autorepair in true, and auto-upgrade in false to avoid issues with the cluster version
   management {
     auto_repair  = true
